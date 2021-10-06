@@ -20,7 +20,7 @@ sh build-ubuntu-binary.sh
 cd build-tools
 sh run-in-container.sh
 sh envsetup.sh
-sh build-windows-binary.sh
+sh build-tools/build-windows-binary.sh
 ```
 
 ### Build for macOS High Sierra

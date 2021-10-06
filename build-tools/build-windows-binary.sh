@@ -1,9 +1,9 @@
 #!/bin/bash
 ### Window requires pyinstall v2.1
-wine msiexec -i python-2.7.8.msi
-wine pywin32-218.win32-py2.7.exe
-wine PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe
-wine lxml-3.7.3.win32-py2.7.exe
+# wine msiexec -i python-2.7.8.msi
+# wine pywin32-218.win32-py2.7.exe
+# wine PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe
+# wine lxml-3.7.3.win32-py2.7.exe
 
 THIS_SCRIPT_PATH=`readlink -f $0`
 THIS_SCRIPT_DIR=`dirname ${THIS_SCRIPT_PATH}`
@@ -17,11 +17,11 @@ rm -r build
 rm -r dist
 rm labelImg.spec
 
-wine c:/Python27/python.exe pyinstaller/pyinstaller.py --hidden-import=xml \
+pyinstaller --hidden-import=xml \
             --hidden-import=xml.etree \
             --hidden-import=xml.etree.ElementTree \
             --hidden-import=lxml.etree \
-             -D -F -n labelImg -c "../labelImg.py" -p ../libs -p ../
+             -D -F -n labelImg -c "labelImg.py" -p ../libs -p ../
 
 FOLDER=$(git describe --abbrev=0 --tags)
 FOLDER="windows_"$FOLDER

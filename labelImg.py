@@ -237,6 +237,9 @@ class MainWindow(QMainWindow, WindowMixin):
         save = action(get_str('save'), self.save_file,
                       'Ctrl+S', 'save', get_str('saveDetail'), enabled=False)
 
+        open_predefined_classes = action(get_str('openPredefinedClasses'), self.open_predefined_classes_file,
+                                 'Ctrl+Shift+C', 'open classes', get_str('openPredefinedClassesDetail'))
+
         def get_format_meta(format):
             """
             returns a tuple containing (title, icon_name) of the selected format
@@ -400,7 +403,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.display_label_option.triggered.connect(self.toggle_paint_labels_option)
 
         add_actions(self.menus.file,
-                    (open, open_dir, change_save_dir, open_annotation, copy_prev_bounding, self.menus.recentFiles, save, save_format, save_as, close, reset_all, delete_image, quit))
+                    (open, open_dir, change_save_dir, open_annotation, open_predefined_classes, copy_prev_bounding, self.menus.recentFiles, save, save_format, save_as, close, reset_all, delete_image, quit))
         add_actions(self.menus.help, (help_default, show_info, show_shortcut))
         add_actions(self.menus.view, (
             self.auto_saving,
@@ -1271,6 +1274,17 @@ class MainWindow(QMainWindow, WindowMixin):
                     filename = filename[0]
             self.load_pascal_xml_by_filename(filename)
 
+    def open_predefined_classes_file(self):    
+        path = os.path.dirname(ustr(self.file_path))\
+            if self.file_path else '.'
+       
+        filters = "Open Predefined Classes Txt File (%s)" % ' '.join(['*.txt'])
+        filename = ustr(QFileDialog.getOpenFileName(self, '%s - Choose a classes.txt file' % __appname__, path, filters))
+        if filename:
+            if isinstance(filename, (tuple, list)):
+                filename = filename[0]
+            self.load_predefined_classes(filename)
+      
     def open_dir_dialog(self, _value=False, dir_path=None, silent=False):
         if not self.may_continue():
             return
@@ -1526,6 +1540,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def load_predefined_classes(self, predef_classes_file):
         if os.path.exists(predef_classes_file) is True:
+            self.label_hist = []
             with codecs.open(predef_classes_file, 'r', 'utf8') as f:
                 for line in f:
                     line = line.strip()
@@ -1533,6 +1548,13 @@ class MainWindow(QMainWindow, WindowMixin):
                         self.label_hist = [line]
                     else:
                         self.label_hist.append(line)
+        if len(self.label_hist) == 0:
+            print("No se cargaron predefined_classes")
+        else:
+            if os.path.exists(predef_classes_file) is True:
+                print("Se cargaron predefined_classes")
+            else:
+                print("Default predefined_classes")
 
     def load_pascal_xml_by_filename(self, xml_path):
         if self.file_path is None:
